@@ -1,0 +1,50 @@
+{
+  "name": "flavors-cli",
+  "version": "0.0.0-development",
+  "description": "Flavors (Node.js configuration management library) command line interface.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/index.js",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  },
+  "repository": "flavors-js/flavors-cli",
+  "keywords": [
+    "node.js",
+    "configuration",
+    "management",
+    "config",
+    "resolver",
+    "CLI"
+  ],
+  "author": {
+    "name": "Michael Ledin",
+    "email": "michael@ledin.me",
+    "url": "https://github.com/mxl"
+  },
+  "engines": {
+    "node": ">= 6"
+  },
+  "files": [
+    "index.js"
+  ],
+  "bin": {
+    "flavors": "./index.js"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/flavors-js/flavors-cli/issues"
+  },
+  "homepage": "https://github.com/flavors-js/flavors-cli#readme",
+  "devDependencies": {
+    "eslint": "^4.5.0",
+    "flavors-loader-yaml": "^1.0.1",
+    "mocha": "^3.3.0",
+    "semantic-release": "^7.0.2",
+    "semantic-release-cli": "^3.0.3"
+  },
+  "dependencies": {
+    "flat": "^4.0.0",
+    "flavors": "^2.0.0",
+    "yargs": "^8.0.2"
+  }
+}
