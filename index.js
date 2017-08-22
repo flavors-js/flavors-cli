@@ -16,7 +16,7 @@ function flavors(argv) {
 
 // noinspection BadExpressionStatementJS
 yargs// eslint-disable-line no-unused-expressions
-  .usage('$0 - CLI tool powered by Flavors (https://github.com/flavors-js/flavors) configuration management library. ' +
+  .usage('flavors - CLI tool powered by Flavors (https://github.com/flavors-js/flavors) configuration management library. ' +
     'It allows to run commands in the pre-configured environment')
   .command('print', 'Load and print configuration in JSON format', yargs => yargs, argv => {
     process.stdout.write(JSON.stringify(flavors(argv), null, 2) + '\n');
