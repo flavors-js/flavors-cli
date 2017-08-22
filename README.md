@@ -29,8 +29,8 @@ $ npm install -g flavors-cli
 ```text
 $ flavors --help
 
-flavors - CLI tool powered by Flavors (https://github.com/flavors-js/flavors) configuration management library. It allows to run commands in the
-pre-configured environment
+flavors - CLI tool powered by Flavors (https://github.com/flavors-js/flavors) configuration
+management library. It allows to run commands in the pre-configured environment
 
 Commands:
   print  Load and print configuration in JSON format
@@ -40,12 +40,12 @@ Options:
   --dir-name, -d     Configuration directory name
   --file-name, -f    Configuration file name (excluding extension)
   --loader, -l       Name of a Node.js module or a path to it
-  --name, -n         Configuration name                                                                                                    [required]
+  --name, -n         Configuration name                                                   [required]
   --separator, -s    Configuration name separator
   --transform, -t    Path to Flavors transformation Node.js module
   --working-dir, -w  Directory from which configuration will be loaded
-  --help             Show help                                                                                                              [boolean]
-  --version          Show version number
+  --help             Show help                                                             [boolean]
+  --version          Show version number                                                   [boolean]
 ```
 
 ### `run` options
@@ -53,15 +53,20 @@ Options:
 ```text
 $ flavors run --help
   ...
-  --command, -c      Command to execute                                                                                                    [required]
-  --module, -m       By default a command specified with --command option is executed with child_process.execSync(). If --module option is
-                     specified then the command is treated like a name of a Node.js module or a path to it. This Node.js module should export
-                     function that accepts configuration object and returns string containing command or object with the following properties:
-                     command, args, options (see arguments of
-                     https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options)     [boolean] [default: false]
-  --skip-env         Skip environment initialization using loaded configuration                                            [boolean] [default: false]
-  --skip-cwd         By default working directory of a process which runs the command is set to value specified in --working-dir option. Pass
-                     --skip-cwd to skip this step                                                                          [boolean] [default: false]
+  --command, -c      Command to execute                                                   [required]
+  --module, -m       By default a command specified with --command option is executed with
+                     child_process.execSync(). If --module option is specified then the command is
+                     treated like a name of a Node.js module or a path to it. This Node.js module
+                     should export function that accepts configuration object and returns string
+                     containing command or object with the following properties: command, args,
+                     options (see arguments of
+                     https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options)
+                                                                          [boolean] [default: false]
+  --skip-env         Skip environment initialization using loaded configuration
+                                                                          [boolean] [default: false]
+  --skip-cwd         By default working directory of a process which runs the command is set to
+                     value specified in --working-dir option. Pass --skip-cwd to skip this step
+                                                                          [boolean] [default: false]
 ```
 
 ## Maintainers
