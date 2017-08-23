@@ -1,18 +1,91 @@
 #!/usr/bin/env node
 'use strict';
 
-const yargs = require('yargs');
+const
+  modulePrefix = 'flavored-',
+  yargs = require('yargs');
 
-function flavors(argv) {
-  return require('flavors')(argv.name, {
+const removeEmpty = (obj) => {
+  Object.keys(obj).forEach((key) => (obj[key] === null || obj[key] === undefined) && delete obj[key]);
+  return obj;
+};
+
+const flavors = (argv, options) => {
+  options = options || {};
+  let loaders;
+  if (argv.loader) {
+    if (Array.isArray(argv.loader) && argv.loader.length > 0) {
+      loaders = argv.loader;
+    } else {
+      loaders = [argv.loader];
+    }
+  }
+  if (loaders) {
+    loaders = loaders.map(l => require(l));
+  }
+  if (!argv.overrideLoaders && options.loaders) {
+    loaders = [...options.loaders, ...(loaders || [])];
+  }
+
+  let transform = argv.transform ? require(argv.transform) : undefined;
+  if (!argv.overrideTransform && options.transform) {
+    if (transform) {
+      const transform2 = transform, transform1 = options.transform;
+      transform = (config, info) => {
+        transform2(transform1(config, info), info);
+      };
+    } else {
+      transform = options.transform;
+    }
+  }
+
+  return require('flavors')(argv.name, Object.assign(options, removeEmpty({
     configDirName: argv.dirName,
     configFileName: argv.fileName,
     configNameSeparator: argv.separator,
     workingDir: argv.workingDir,
-    loaders: argv.loader ? (Array.isArray(argv.loader) ? argv.loader : [argv.loader]).map(l => require(l)) : undefined,
-    transform: argv.transform ? require(argv.transform) : undefined
+    loaders: loaders,
+    transform: transform
+  })));
+};
+
+const getProcessOptions = (argv, options, config) => {
+  options = options || {};
+  return Object.assign(options, {
+    cwd: (argv.skipCwd ? undefined : argv.workingDir) || options.cwd || process.env.cwd,
+    env: Object.assign(process.env, argv.skipEnv ? {} : require('flat').flatten(config, { delimiter: '_' }), options.env),
+    stdio: 'inherit'
   });
-}
+};
+
+const runCommand = (argv, command, flavorsOptions) => {
+  const child = require('child_process');
+  const config = flavors(argv, flavorsOptions);
+  if (typeof command === 'function') {
+    const r = command(config);
+    if (typeof r === 'object') {
+      child.spawn(r.command, [...(r.args || []), ...(argv.args || [])], getProcessOptions(argv, r.options || {}, config));
+    } else {
+      child.execSync([r, ...(argv.args || [])].join(' '), getProcessOptions(argv, {}, config));
+    }
+  } else if (typeof command === 'string') {
+    child.execSync([command, ...(argv.args || [])].join(' '), getProcessOptions(argv, {}, config));
+  }
+};
+
+const runModule = (argv) => {
+  let m;
+  try {
+    m = require(modulePrefix + argv.command);
+  } catch (ignore) { // eslint-disable-line no-empty
+    m = require(argv.command);
+  }
+  if (typeof m === 'object') {
+    runCommand(argv, m.command, m.options);
+  } else {
+    runCommand(argv, m);
+  }
+};
 
 // noinspection BadExpressionStatementJS
 yargs// eslint-disable-line no-unused-expressions
@@ -26,7 +99,7 @@ yargs// eslint-disable-line no-unused-expressions
       'command': {
         alias: 'c',
         demandOption: true,
-        describe: 'Command to execute',
+        describe: 'Command or Node.js module (if --module is specified) to execute.',
         requiresArg: true
       },
       'module': {
@@ -35,8 +108,10 @@ yargs// eslint-disable-line no-unused-expressions
         default: false,
         describe: 'By default a command specified with --command option is executed with child_process.execSync(). ' +
         'If --module option is specified then the command is treated like a name of a Node.js module or a path to it. ' +
-        'This Node.js module should export function that accepts configuration object and returns string containing command ' +
-        'or object with the following properties: command, args, options (see arguments of https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options)'
+        'This Node.js module should export one of the following: 1. a string containing command; 2. a function that accepts configuration object and returns string containing command; ' +
+        '3. a function that accepts configuration object and returns object with the following properties: ' +
+        'command, args, options (see arguments of https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options); ' +
+        '4. a plugin object with fields: command - can be a value from 1., 2. or 3., options - object passed to Flavors (see https://github.com/flavors-js/flavors#options-parameter)'
       },
       'skip-env': {
         boolean: true,
@@ -49,6 +124,25 @@ yargs// eslint-disable-line no-unused-expressions
         describe: 'By default working directory of a process which runs the command is set to value specified in ' +
         '--working-dir option. Pass --skip-cwd to skip this step'
       },
+      'skip-module-prefix': {
+        boolean: true,
+        default: false,
+        describe: 'By default program tries first to load Node.js module with `flavored-` prefix. It\'s recommended prefix for modules providing plugins. ' +
+        'For example, if `--command docker-compose --module` options are specified then program will try first to load `flavored-docker-compose` module. ' +
+        'If no such module is found then it will try to load `docker-compose` module. Use this option to disable such behavior'
+      },
+      'override-loaders': {
+        boolean: true,
+        default: false,
+        describe: 'By default loaders specified in module `options` field are prepended to list of loaders provided by --loader option. ' +
+        'Use this option to change the behavior and use only --loader loaders'
+      },
+      'override-transform': {
+        boolean: true,
+        default: false,
+        describe: 'By default transformation specified in module `transform` field is executed before transformation provided by --transform option. ' +
+        'Use this option to change the behavior and use only --transform transformation'
+      },
       'args': {
         alias: 'a',
         array: true,
@@ -57,26 +151,10 @@ yargs// eslint-disable-line no-unused-expressions
       }
     });
   }, argv => {
-    const config = flavors(argv);
-    const getOptions = (options) => {
-      options = options || {};
-      return Object.assign(options, {
-        cwd: (argv.skipCwd ? undefined : argv.workingDir) || options.cwd || process.env.cwd,
-        env: Object.assign(process.env, argv.skipEnv ? {} : require('flat').flatten(config, { delimiter: '_' }), options.env),
-        stdio: 'inherit'
-      });
-    };
-    const child = require('child_process');
     if (argv.module) {
-      const m = require(argv.command);
-      const r = m(config);
-      if (typeof r === 'object') {
-        child.spawn(r.command, [...(r.args || []), ...(argv.args || [])], getOptions(r.options || {}));
-      } else {
-        child.execSync([r, ...(argv.args || [])].join(' '), getOptions());
-      }
+      runModule(argv);
     } else {
-      child.execSync([argv.command, ...(argv.args || [])].join(' '), getOptions());
+      runCommand(argv, argv.command);
     }
   })
   .options({
@@ -121,5 +199,5 @@ yargs// eslint-disable-line no-unused-expressions
   .demandCommand(1, 'Please specify at least one command')
   .help()
   .version()
-  .wrap(yargs.terminalWidth())
+  .wrap(100)
   .argv;

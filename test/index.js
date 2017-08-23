@@ -38,10 +38,18 @@ describe('cli', () => {
   it('applies loaders', () => {
     assert.equal(child.execSync(`${cliPath} -w ${testPath('loaders')} -n a-b-c -l ${testPath('..', 'node_modules', 'flavors', 'jsonLoader.js')} -l flavors/jsLoader -l flavors-loader-yaml run -c 'echo $value1$value2$value3'`).toString(), '123\n');
   });
-  it('execs command from Node.js module', () => {
-    assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'exec.js')} --args '$value' '$value'`).toString(), '1 1 1\n');
-  });
-  it('spawns command from Node.js module', () => {
-    assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'spawn.js')} --args '$value' '$value'`).toString(), '1 $value $value\n');
+  describe('runs Node.js module', () => {
+    it('with string', () => {
+      assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'string.js')} --args '$value' '$value'`).toString(), '1 1 1\n');
+    });
+    it('with function returning string', () => {
+      assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'functionString.js')} --args '$value' '$value'`).toString(), '1 1 1\n');
+    });
+    it('with function returning child_process.spawn() args', () => {
+      assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'spawnArgs.js')} --args '$value' '$value'`).toString(), '1 $value $value\n');
+    });
+    it('with object', () => {
+      assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'object.js')} --args '$value' '$value'`).toString(), '2 $value $value\n');
+    });
   });
 });

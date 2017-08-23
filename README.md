@@ -53,21 +53,39 @@ Options:
 ```text
 $ flavors run --help
   ...
-  --command, -c      Command to execute                                                   [required]
-  --module, -m       By default a command specified with --command option is executed with
-                     child_process.execSync(). If --module option is specified then the command is
-                     treated like a name of a Node.js module or a path to it. This Node.js module
-                     should export function that accepts configuration object and returns string
-                     containing command or object with the following properties: command, args,
-                     options (see arguments of
-                     https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options)
+  --command, -c         Command or Node.js module (if --module is specified) to execute.  [required]
+  --module, -m          By default a command specified with --command option is executed with
+                        child_process.execSync(). If --module option is specified then the command
+                        is treated like a name of a Node.js module or a path to it. This Node.js
+                        module should export one of the following: 1. a string containing command;
+                        2. a function that accepts configuration object and returns string
+                        containing command; 3. a function that accepts configuration object and
+                        returns object with the following properties: command, args, options (see
+                        arguments of
+                        https://nodejs.org/api/child_process.html#child_process_child_process_spawn_
+                        command_args_options); 4. a plugin object with fields: command - can be a
+                        value from 1., 2. or 3., options - object passed to Flavors (see
+                        https://github.com/flavors-js/flavors#options-parameter)
                                                                           [boolean] [default: false]
-  --skip-env         Skip environment initialization using loaded configuration
+  --skip-env            Skip environment initialization using loaded configuration
                                                                           [boolean] [default: false]
-  --skip-cwd         By default working directory of a process which runs the command is set to
-                     value specified in --working-dir option. Pass --skip-cwd to skip this step
+  --skip-cwd            By default working directory of a process which runs the command is set to
+                        value specified in --working-dir option. Pass --skip-cwd to skip this step
                                                                           [boolean] [default: false]
-  --args, -a         Additional command arguments
+  --skip-module-prefix  By default program tries first to load Node.js module with `flavored-`
+                        prefix. It's recommended prefix for modules providing plugins. For example,
+                        if `--command docker-compose --module` options are specified then program
+                        will try first to load `flavored-docker-compose` module. If no such module
+                        is found then it will try to load `docker-compose` module. Use this option
+                        to disable such behavior                          [boolean] [default: false]
+  --override-loaders    By default loaders specified in module `options` field are prepended to list
+                        of loaders provided by --loader option. Use this option to change the
+                        behavior and use only --loader loaders            [boolean] [default: false]
+  --override-transform  By default transformation specified in module `transform` field is executed
+                        before transformation provided by --transform option. Use this option to
+                        change the behavior and use only --transform transformation
+                                                                          [boolean] [default: false]
+  --args, -a            Additional command arguments                                         [array]
 ```
 
 ## Maintainers
