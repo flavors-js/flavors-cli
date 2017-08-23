@@ -48,6 +48,12 @@ yargs// eslint-disable-line no-unused-expressions
         default: false,
         describe: 'By default working directory of a process which runs the command is set to value specified in ' +
         '--working-dir option. Pass --skip-cwd to skip this step'
+      },
+      'args': {
+        alias: 'a',
+        array: true,
+        describe: 'Additional command arguments',
+        requiresArg: true
       }
     });
   }, argv => {
@@ -65,12 +71,12 @@ yargs// eslint-disable-line no-unused-expressions
       const m = require(argv.command);
       const r = m(config);
       if (typeof r === 'object') {
-        child.spawn(r.command, r.args, getOptions(r.options || {}));
+        child.spawn(r.command, [...(r.args || []), ...(argv.args || [])], getOptions(r.options || {}));
       } else {
-        child.execSync(r, getOptions());
+        child.execSync([r, ...(argv.args || [])].join(' '), getOptions());
       }
     } else {
-      child.execSync(argv.command, getOptions());
+      child.execSync([argv.command, ...(argv.args || [])].join(' '), getOptions());
     }
   })
   .options({

@@ -67,6 +67,7 @@ $ flavors run --help
   --skip-cwd         By default working directory of a process which runs the command is set to
                      value specified in --working-dir option. Pass --skip-cwd to skip this step
                                                                           [boolean] [default: false]
+  --args, -a         Additional command arguments
 ```
 
 ## Maintainers

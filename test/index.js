@@ -27,7 +27,7 @@ describe('cli', () => {
     assert.equal(child.execSync(`${cliPath} -w ${testPath('nested')} -n a run -c 'echo $nested_value'`).toString(), '1\n');
   });
   it('applies transform', () => {
-    assert.equal(child.execSync(`${cliPath} -w ${commonTestPath} -n a -t ${testPath('transform', 'index.js')} run -c 'echo $value'`).toString(), '2\n');
+    assert.equal(child.execSync(`${cliPath} -w ${commonTestPath} -n a -t ${testPath('transform', 'index.js')} run -c 'echo $value' --args '$value' '$value'`).toString(), '2 2 2\n');
   });
   it('applies configDirName', () => {
     assert.equal(child.execSync(`${cliPath} -w ${testPath('configDirName')} -n a -d config run -c 'echo $value'`).toString(), '1\n');
@@ -39,9 +39,9 @@ describe('cli', () => {
     assert.equal(child.execSync(`${cliPath} -w ${testPath('loaders')} -n a-b-c -l ${testPath('..', 'node_modules', 'flavors', 'jsonLoader.js')} -l flavors/jsLoader -l flavors-loader-yaml run -c 'echo $value1$value2$value3'`).toString(), '123\n');
   });
   it('execs command from Node.js module', () => {
-    assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'exec.js')}`).toString(), '1\n');
+    assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'exec.js')} --args '$value' '$value'`).toString(), '1 1 1\n');
   });
   it('spawns command from Node.js module', () => {
-    assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'spawn.js')}`).toString(), '1\n');
+    assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'spawn.js')} --args '$value' '$value'`).toString(), '1 $value $value\n');
   });
 });
