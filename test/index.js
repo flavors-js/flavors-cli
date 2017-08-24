@@ -11,7 +11,7 @@ function testPath(...names) {
 
 const
   commonTestPath = testPath('commonTest'),
-  cliPath = path.resolve(__dirname, '..','index.js');
+  cliPath = path.resolve(__dirname, '..', 'cli.js');
 
 describe('cli', () => {
   it('prints config', () => {
