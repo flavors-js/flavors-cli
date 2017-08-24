@@ -26,11 +26,10 @@
     "node": ">= 6"
   },
   "files": [
-    "cli.js",
     "index.js"
   ],
   "bin": {
-    "flavors": "./cli.js"
+    "flavors": "./index.js"
   },
   "license": "MIT",
   "bugs": {
@@ -45,8 +44,7 @@
     "semantic-release-cli": "^3.0.3"
   },
   "dependencies": {
-    "flat": "^4.0.0",
-    "flavors": "^2.3.0",
+    "flavors-runner": "^1.0.0",
     "yargs": "^8.0.2"
   }
 }
