@@ -28,6 +28,8 @@ const getOptions = argv => {
     skipCwd: argv.skipCwd,
     skipEnv: argv.skipEnv,
     skipModulePrefix: argv.skipModulePrefix,
+    spawnOptions: { shell: true, stdio: 'inherit' },
+    sync: true,
     transform: argv.transform ? require(argv.transform) : undefined,
     workingDir: argv.workingDir
   };
@@ -39,7 +41,10 @@ yargs// eslint-disable-line no-unused-expressions
     'It allows to run commands in the pre-configured environment')
   .command('print', 'Load and print configuration in JSON format',
     yargs => yargs,
-    argv => require('flavors-runner').print(getOptions(argv)))
+    argv => {
+      const options = getOptions(argv);
+      process.stdout.write(JSON.stringify(require('flavors')(options.configName, options), null, 2) + '\n');
+    })
   .command('run', 'Load configuration and run command', yargs => {
     return yargs.options({
       'command': {
@@ -96,7 +101,7 @@ yargs// eslint-disable-line no-unused-expressions
         requiresArg: true
       }
     });
-  }, argv => require('flavors-runner').run(getOptions(argv)))
+  }, argv => require('flavors-runner')(getOptions(argv)))
   .options({
     'dir-name': {
       alias: 'd',

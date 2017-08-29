@@ -46,10 +46,10 @@ describe('cli', () => {
       assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'functionString.js')} --args '$value' '$value'`).toString(), '1 1 1\n');
     });
     it('with function returning child_process.spawn() args', () => {
-      assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'spawnArgs.js')} --args '$value' '$value'`).toString(), '1 $value $value\n');
+      assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'spawnArgs.js')} --args '$value' '$value'`).toString(), '1 1 1\n');
     });
     it('with object', () => {
-      assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'object.js')} --args '$value' '$value'`).toString(), '2 $value $value\n');
+      assert.equal(child.execSync(`${cliPath} -w ${testPath('module')} -n a run -m -c ${testPath('module', 'object.js')} --args '$value' '$value'`).toString(), '2 2 2\n');
     });
   });
 });

@@ -44,7 +44,7 @@
     "semantic-release-cli": "^3.0.3"
   },
   "dependencies": {
-    "flavors-runner": "^1.0.0",
+    "flavors-runner": "^2.0.0",
     "yargs": "^8.0.2"
   }
 }
