@@ -2,6 +2,7 @@
 'use strict';
 
 const
+  path = require('path'),
   yargs = require('yargs');
 
 const getOptions = argv => {
@@ -14,15 +15,26 @@ const getOptions = argv => {
     }
     loaders = loaders.map(require);
   }
+  let command = argv.command;
+  if (argv.module) {
+    if (command.startsWith('.')) {
+      command = require(path.relative(process.cwd(), command));
+    } else {
+      try {
+        command = require('flavored-' + command);
+      } catch (_) {
+        command = require(command);
+      }
+    }
+  }
   return {
     args: argv.args,
-    command: argv.command,
+    command: command,
     configDirName: argv.dirName,
     configFileName: argv.fileName,
     configName: argv.name,
     configNameSeparator: argv.separator,
     loaders: loaders,
-    module: argv.module,
     overrideLoaders: argv.overrideLoaders,
     overrideTransform: argv.overrideTransform,
     skipCwd: argv.skipCwd,
