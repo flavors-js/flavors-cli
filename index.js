@@ -109,8 +109,7 @@ yargs// eslint-disable-line no-unused-expressions
       'args': {
         alias: 'a',
         array: true,
-        describe: 'Additional command arguments',
-        requiresArg: true
+        describe: 'Additional command arguments'
       }
     });
   }, argv => require('flavors-runner')(getOptions(argv)))

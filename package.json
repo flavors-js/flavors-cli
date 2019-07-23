@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/index.js",
-    "lint": "eslint *.js test/**/*.js",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "lint": "eslint *.js test/**/*.js"
   },
   "repository": "flavors-js/flavors-cli",
   "keywords": [
@@ -37,14 +36,14 @@
   },
   "homepage": "https://github.com/flavors-js/flavors-cli#readme",
   "devDependencies": {
-    "eslint": "^4.8.0",
+    "eslint": "^6.1.0",
     "flavors-loader-yaml": "^1.0.1",
-    "mocha": "^4.0.1",
-    "semantic-release": "^8.1.2",
-    "semantic-release-cli": "^3.2.0"
+    "mocha": "^6.2.0",
+    "semantic-release": "^15.13.18",
+    "semantic-release-cli": "^5.1.1"
   },
   "dependencies": {
-    "flavors-runner": "^4.0.0",
-    "yargs": "^9.0.1"
+    "flavors-runner": "^4.0.3",
+    "yargs": "^13.3.0"
   }
 }
