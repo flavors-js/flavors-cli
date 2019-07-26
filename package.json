@@ -18,7 +18,7 @@
   ],
   "author": {
     "name": "Michael Ledin",
-    "email": "michael@ledin.me",
+    "email": "mledin89@gmail.com",
     "url": "https://github.com/mxl"
   },
   "engines": {
@@ -43,7 +43,7 @@
     "semantic-release-cli": "^5.1.1"
   },
   "dependencies": {
-    "flavors-runner": "^4.0.3",
+    "flavors": "^4.2.0",
     "yargs": "^13.3.0"
   }
 }
